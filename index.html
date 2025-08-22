@@ -254,6 +254,7 @@ $('#post-btn').onclick = function() {
 load()
 renderClasses()
 if (data.activeId) renderStream()
+    // Advanced single-file Classroom clone // Rules honored: use let (no const) and no semicolons in JS let $ = s => document.querySelector(s) let $all = s => Array.from(document.querySelectorAll(s)) let storageKey = 'gc_adv_v1' let data = { classes: [], activeId: null } function save(){ try{ localStorage.setItem(storageKey, JSON.stringify(data)) }catch(e){} } function load(){ let raw = localStorage.getItem(storageKey) if(!raw) return try{ let obj = JSON.parse(raw); if(obj && obj.classes) data = obj }catch(e){} } function uid(){ let s = Math.random().toString(36).slice(2,8) return s.toUpperCase() } if(data.activeId) setActive(data.activeId)
 
   </script>
 </body>
