@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Classroom Clone – Advanced (Stream · Classwork · People)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;--panel:#111835;--panel-2:#0e1430;--text:#eaf0ff;--muted:#a6b0d7;--line:#25366e;--primary:#6aa2ff;--accent:#8dd8b2;--danger:#ff7b7b
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(1200px 600px at 70% -10%,#1b2550 0%,transparent 70%),var(--bg);color:var(--text)}
+    .app{display:grid;grid-template-columns:280px 1fr;grid-template-rows:64px 1fr;min-height:100vh}
+    header{grid-column:1/3;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));backdrop-filter:blur(6px)}
+    .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:800;color:#0a1025}
+    .title{font-weight:800}
+    .spacer{flex:1}
+    .btn{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer}
+    .btn:hover{border-color:#2d3f7a;box-shadow:0 0 0 4px rgba(106,162,255,.25)}
+    aside{border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)),var(--panel-2);padding:14px}
+    .section-label{color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:10px 6px}
+    .class-list{display:grid;gap:10px;margin-top:6px}
+    .class-item{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;cursor:pointer}
+    .class-item:hover{border-color:#2d3f7a}
+    .avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:700;background:#233368}
+    .class-name{font-weight:700}
+    .class-code{font-size:12px;color:var(--muted)}
+    main{padding:18px;display:grid;gap:18px}
+    .hero{border-radius:18px;background:radial-gradient(600px 200px at 0% -10%,rgba(141,216,178,.12),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)),var(--panel);border:1px solid var(--line);padding:18px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px}
+    .hero h2{margin:0 0 6px 0}
+    .hero p{margin:0;color:var(--muted)}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid #2c3e78;background:#0f1a3a;font-size:12px;color:var(--muted)}
+    .tabs{display:flex;gap:8px}
+    .tab{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);cursor:pointer}
+    .tab.active{background:#0f1a3a}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+    .card h3{margin:0 0 12px}
+    .row{display:grid;grid-template-columns:1fr auto;gap:10px}
+    .input,textarea,select{width:100%;background:#0e1732;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+    textarea{min-height:80px;resize:vertical}
+    .right{text-align:right}
+    .post{display:grid;gap:6px;padding:12px;border-radius:12px;border:1px solid var(--line);background:#101a39;margin-bottom:10px}
+    .meta{color:var(--muted);font-size:12px}
+    .muted{color:var(--muted)}
+    .actions{display:flex;gap:6px}
+    .danger{color:var(--danger)}
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid var(--line);padding:8px;text-align:left}
+    th{background:#0f1a3a}
+    @media (max-width: 900px){.app{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo">GC</div>
+      <div class="title">Classroom</div>
+      <div class="spacer"></div>
+      <button class="btn" id="seedBtn">Seed demo</button>
+      <button class="btn" id="clearBtn">Clear data</button>
+    </header>
+
+    <aside>
+      <div class="section-label">Your classes</div>
+      <div class="class-list" id="classList"></div>
+      <div class="card" style="margin-top:12px">
+        <h3>New class</h3>
+        <input class="input" id="newClassName" placeholder="Class name" style="margin-bottom:8px">
+        <input class="input" id="newSection" placeholder="Section (optional)" style="margin-bottom:8px">
+        <button class="btn" id="addClassBtn">Create class</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <div>
+          <h2 id="classTitle">Welcome</h2>
+          <p id="classSubtitle" class="muted">Create or select a class to begin</p>
+          <div class="tabs" style="margin-top:8px">
+            <button class="tab active" data-tab="stream">Stream</button>
+            <button class="tab" data-tab="classwork">Classwork</button>
+            <button class="tab" data-tab="people">People</button>
+          </div>
+        </div>
+        <div class="right">
+          <div class="pill">Code: <span id="classCode">—</span></div>
+        </div>
+      </div>
+
+      <!-- STREAM TAB -->
+      <section class="tab-panel" id="panel-stream">
+        <div class="grid">
+          <div class="card">
+            <h3>Create announcement</h3>
+            <div class="row" style="margin-bottom:10px">
+              <input class="input" id="postTitle" placeholder="Title">
+              <button class="btn" id="postBtn">Post</button>
+            </div>
+            <textarea id="postBody" placeholder="Write announcement..."></textarea>
+          </div>
+          <div class="card">
+            <h3>Tips</h3>
+            <div class="muted">Posts appear in reverse order. You can edit or delete them.</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Stream</h3>
+          <div id="stream"></div>
+          <div id="emptyStream" class="muted" style="text-align:center;padding:16px">No posts yet</div>
+        </div>
+      </section>
+
+      <!-- CLASSWORK TAB -->
+      <section class="tab-panel" id="panel-classwork" style="display:none">
+        <div class="grid">
+          <div class="card">
+            <h3>New assignment</h3>
+            <input class="input" id="asTitle" placeholder="Title" style="margin-bottom:8px">
+            <textarea id="asDesc" placeholder="Description" style="margin-bottom:8px"></textarea>
+            <input class="input" id="asDue" type="date" style="margin-bottom:8px">
+            <button class="btn" id="addAsBtn">Add assignment</button>
+          </div>
+          <div class="card">
+            <h3>Filters</h3>
+            <select id="asFilter" class="input">
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="submitted">Submitted</option>
+            </select>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Assignments</h3>
+          <div id="asList"></div>
+          <div id="emptyAs" class="muted" style="text-align:center;padding:16px">No assignments yet</div>
+        </div>
+      </section>
+
+      <!-- PEOPLE TAB -->
+      <section class="tab-panel" id="panel-people" style="display:none">
+        <div class="grid">
+          <div class="card">
+            <h3>Add student</h3>
+            <input id="stName" class="input" placeholder="Full name" style="margin-bottom:8px">
+            <input id="stEmail" class="input" placeholder="Email" style="margin-bottom:8px">
+            <button class="btn" id="addStudentBtn">Add student</button>
+          </div>
+          <div class="card">
+            <h3>Import</h3>
+            <div class="muted">Paste a comma-separated list: Name &lt;email&gt;</div>
+            <textarea id="bulk" placeholder="e.g. Ali Raza <ali@example.com>, Sana Khan <sana@example.com>"></textarea>
+            <button class="btn" id="bulkBtn" style="margin-top:8px">Add list</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Students</h3>
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead>
+            <tbody id="peopleBody"></tbody>
+          </table>
+          <div id="emptyPeople" class="muted" style="text-align:center;padding:16px">No students yet</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+let $ = function(s) { return document.querySelector(s) }
+let $all = function(s) { return document.querySelectorAll(s) }
+
+let storageKey = 'gc_adv_v1'
+let data = { classes: [], activeId: null }
+
+function save() {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(data))
+  } catch(e) {}
+}
+
+function load() {
+  let raw = localStorage.getItem(storageKey)
+  if (!raw) return
+  try {
+    let obj = JSON.parse(raw)
+    if (obj && obj.classes) data = obj
+  } catch(e) {}
+}
+
+function uid() {
+  let s = Math.random().toString(36).slice(2, 8)
+  return s.toUpperCase()
+}
+
+function renderClasses() {
+  let container = $('#class-list')
+  container.innerHTML = ''
+  for (let i = 0; i < data.classes.length; i++) {
+    let c = data.classes[i]
+    let div = document.createElement('div')
+    div.className = 'class-card'
+    div.textContent = c.name
+    div.onclick = function() {
+      data.activeId = c.id
+      save()
+      renderStream()
+    }
+    container.appendChild(div)
+  }
+}
+
+function renderStream() {
+  let active = null
+  for (let i = 0; i < data.classes.length; i++) {
+    if (data.classes[i].id === data.activeId) active = data.classes[i]
+  }
+  let stream = $('#stream')
+  stream.innerHTML = ''
+  if (!active) return
+  for (let i = 0; i < active.posts.length; i++) {
+    let p = active.posts[i]
+    let div = document.createElement('div')
+    div.className = 'post'
+    div.textContent = p
+    stream.appendChild(div)
+  }
+}
+
+$('#create-class-btn').onclick = function() {
+  let name = prompt('Class name?')
+  if (!name) return
+  let newClass = { id: uid(), name: name, posts: [] }
+  data.classes.push(newClass)
+  save()
+  renderClasses()
+}
+
+$('#post-btn').onclick = function() {
+  let active = null
+  for (let i = 0; i < data.classes.length; i++) {
+    if (data.classes[i].id === data.activeId) active = data.classes[i]
+  }
+  if (!active) return alert('Select a class first')
+  let text = prompt('Post something?')
+  if (!text) return
+  active.posts.push(text)
+  save()
+  renderStream()
+}
+
+load()
+renderClasses()
+if (data.activeId) renderStream()
+
+  </script>
+</body>
+</html>
